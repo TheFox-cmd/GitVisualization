@@ -1,30 +1,46 @@
-import { useEffect, useRef } from "react";
-import { Terminal } from "@xterm/xterm";
-import "@xterm/xterm/css/xterm.css";
-import Box from "@mui/material/Box";
+import { useState } from "react";
+import Functions from "../utils/functions";
 
 const GitTerminal = () => {
-  const terminalRef = useRef<HTMLDivElement>(null);
+  const [command, setCommand] = useState<string>("");
+  const [commandList, setCommandList] = useState<string[]>([]);
+  const functions = Functions();
 
-  useEffect(() => {
-    const term = new Terminal({
-      cursorBlink: true,
-      theme: {
-        background: "#1e1e1e", // Dark background
-        foreground: "#ffffff", // White text
-        cursor: "#33AAff", // Green cursor
-      },
-      fontSize: 14,
-      fontFamily: "monospace",
-    });
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") return;
 
-    if (terminalRef.current) {
-      term.open(terminalRef.current);
-      term.write("Welcome to the Git Visualizer Terminal!\r\n");
+    const args = command.split(" ");
+    console.log(args);
+
+    const commandName = args[0];
+    switch (commandName) {
+      case "ls":
+        functions.ls();
+        break;
+      case "cd":
+        functions.cd();
+        break;
+      case "help":
+        functions.help();
+        break;
+      default:
+        console.log("Command not found");
     }
-  }, []);
 
-  return <Box ref={terminalRef} sx={{ width: "100%", height: "100%", overflow: "hidden" }} />;
+    setCommandList([...commandList, command]);
+    setCommand("");
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={command}
+        onChange={(e) => setCommand(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(e)}
+      />
+    </div>
+  );
 };
 
 export default GitTerminal;
