@@ -1,31 +1,23 @@
 import { useState } from "react";
-import Functions from "../utils/functions";
+import functions from "../utils/functions";
 
 const GitTerminal = () => {
   const [command, setCommand] = useState<string>("");
   const [commandList, setCommandList] = useState<string[]>([]);
-  const functions = Functions();
+
+  const [path, setPath] = useState<string>("/root");
+  const [display, setDisplay] = useState<string[]>([]);
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
 
     const args = command.split(" ");
-    console.log(args);
 
-    const commandName = args[0];
-    switch (commandName) {
-      case "ls":
-        functions.ls();
-        break;
-      case "cd":
-        functions.cd();
-        break;
-      case "help":
-        functions.help();
-        break;
-      default:
-        console.log("Command not found");
-    }
+    const commandName : string = args[0];
+    if (!(commandName in functions)) setDisplay([...display, "Command not found"]);
+
+    functions[commandName](display, setDisplay, path, setPath, args);
 
     setCommandList([...commandList, command]);
     setCommand("");
@@ -33,12 +25,19 @@ const GitTerminal = () => {
 
   return (
     <div>
-      <input
-        type="text"
-        value={command}
-        onChange={(e) => setCommand(e.target.value)}
-        onKeyDown={(e) => handleKeyDown(e)}
-      />
+      {display.map((line, index) => (
+        <div key={index}>{line}</div>
+      ))}
+      <div>
+        <span>{path}</span>
+        <input
+          type="text"
+          value={command}
+          onChange={(e) => setCommand(e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e)}
+          autoFocus
+        />
+      </div>
     </div>
   );
 };
