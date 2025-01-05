@@ -2,17 +2,25 @@ import { Function } from "../types/types";
 
 type FunctionList = { [key: string]: Function };
 
+const user = "test@javascript:";
+const trail = "$ ";
+
 const functions: FunctionList = {
-  echo: (_display, setDisplay, _path, _setPath, args) => {
-    setDisplay([..._display, args.slice(1).join(" ")]);
+  echo: (display, setDisplay, path, _setPath, args) => {
+    const command = args[0];
+    // ! display echo error 
+    const latestCommand: string = user + path + args + trail + command;
+    setDisplay([...display, latestCommand, args.slice(1).join(" ")]);
   },
 
   ls: (_display, _setDisplay, _path, _setPath, _args) => {},
 
   cd: (_display, _setDisplay, _path, _setPath, _args) => {},
 
-  pwd: (display, setDisplay, path, _setPath, _args) => {
-    setDisplay([...display, path]);
+  pwd: (display, setDisplay, path, _setPath, args) => {
+    const command = args[0];
+    const latestCommand: string = user + path + trail + command;
+    setDisplay([...display, latestCommand, "PATH", "---------------", path]);
   },
 
   touch: (_display, _setDisplay, _path, _setPath, _args) => {},
@@ -37,7 +45,7 @@ const functions: FunctionList = {
 
   help: (display, setDisplay, path, _setPath, args) => {
     const command = args[0];
-    const latestCommand: string = path + " " + command;
+    const latestCommand: string = user + path + trail + command;
     const commands = Object.keys(functions);
     setDisplay([...display, latestCommand, ...commands]);
   },
