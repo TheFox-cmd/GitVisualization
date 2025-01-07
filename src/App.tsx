@@ -1,7 +1,7 @@
-import GitTerminal from "./components/GitTerminal";
+import Home from "./components/Home";
 
 function App() {
-  return <GitTerminal />;
+  return <Home />
 }
 
 export default App;
